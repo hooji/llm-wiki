@@ -9,3 +9,12 @@
 
 # macOS
 .DS_Store
+
+# Java build artifacts
+target/
+*.class
+.classpath
+.project
+.settings/
+.idea/
+*.iml
