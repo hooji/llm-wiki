@@ -4,6 +4,7 @@ import net.llmwiki.capability.*;
 import net.llmwiki.core.AgentExecutor;
 import net.llmwiki.core.LLM;
 import net.llmwiki.core.WebTools;
+import net.llmwiki.core.search.Searchers;
 import net.llmwiki.prelude.HubResolver;
 
 import java.nio.file.Path;
@@ -34,7 +35,7 @@ public final class LlmWiki {
   private final Output outputCapability;
 
   public LlmWiki() {
-    this(new LLM(), AgentExecutor.STUB, WebTools.WebSearcher.STUB, WebTools.HTTP_FETCHER);
+    this(new LLM(), AgentExecutor.STUB, Searchers.auto(), WebTools.HTTP_FETCHER);
   }
 
   public LlmWiki(LLM llm, AgentExecutor agents,

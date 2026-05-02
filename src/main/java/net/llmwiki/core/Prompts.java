@@ -851,4 +851,154 @@ public final class Prompts {
         "wiki_articles_used":["wiki/...md"]
       }
       """;
+
+  public static final String GENERATE_OUTPUT_STUDY_GUIDE = """
+      You are generating a study guide from a wiki knowledge base.
+
+      Subject articles: {subject_json}
+      Craft articles: {craft_json}
+      Mode: {mode}
+
+      A study guide combines concept definitions, the relationships between
+      concepts, and Q&A pairs at varying difficulty. Citations to wiki
+      articles are mandatory on the answers.
+
+      Return JSON ONLY:
+      {
+        "title":"...",
+        "concepts":[
+          {
+            "name":"...",
+            "slug":"<lowercase-hyphenated>",
+            "definition":"<1-2 sentences, plain language>",
+            "key_relationships":[
+              {"to":"<slug>","kind":"is-a|part-of|contrasts-with","description":"..."}
+            ],
+            "wiki_link":"wiki/.../...md"
+          }
+        ],
+        "questions":[
+          {
+            "q":"...",
+            "a":"<short answer with [Article](path) citations>",
+            "difficulty":"easy|medium|hard"
+          }
+        ]
+      }
+
+      Aim for 5-15 concepts and 8-20 Q&As.
+      """;
+
+  public static final String GENERATE_OUTPUT_SLIDES = """
+      You are generating a markdown slide deck from a wiki knowledge base.
+      The deck will be rendered with Marp / similar — slides are separated
+      by `---` lines. Each slide carries a title and 3-5 bullet points.
+
+      Subject articles: {subject_json}
+      Craft articles: {craft_json}
+      Mode: {mode}
+
+      Return JSON ONLY:
+      {
+        "title":"...",
+        "subtitle":"<optional>",
+        "slides":[
+          {
+            "title":"...",
+            "bullets":["...","...","..."],
+            "speaker_notes":"<optional>",
+            "wiki_citations":["wiki/...md"]
+          }
+        ]
+      }
+
+      Aim for 10-30 slides total. Open with a title slide, close with a
+      sources slide. In retardmax mode, more slides is fine.
+      """;
+
+  public static final String GENERATE_OUTPUT_TIMELINE = """
+      You are generating a chronological timeline from a wiki knowledge base.
+      Extract dated events from the subject articles. Each entry must cite
+      the source wiki article it came from.
+
+      Subject articles: {subject_json}
+      Craft articles: {craft_json}
+      Mode: {mode}
+
+      Date formats accepted: "YYYY", "YYYY-MM", or "YYYY-MM-DD". Sort
+      ascending by date. Include the significance of each event in one
+      sentence.
+
+      Return JSON ONLY:
+      {
+        "title":"...",
+        "scope":"<what range / topic this timeline covers>",
+        "entries":[
+          {
+            "date":"YYYY|YYYY-MM|YYYY-MM-DD",
+            "event":"...",
+            "significance":"<one sentence>",
+            "source_article":"wiki/.../...md"
+          }
+        ]
+      }
+      """;
+
+  public static final String GENERATE_OUTPUT_GLOSSARY = """
+      You are generating a glossary of key terms from a wiki knowledge base.
+      Each entry: term, aliases (synonyms / abbreviations), 1-3 sentence
+      definition, see-also cross-references, and the source article slug.
+
+      Subject articles: {subject_json}
+      Craft articles: {craft_json}
+      Mode: {mode}
+
+      Glossaries should be exhaustive within their scope. Sort entries
+      alphabetically by `term`.
+
+      Return JSON ONLY:
+      {
+        "title":"...",
+        "scope":"<what this glossary covers>",
+        "entries":[
+          {
+            "term":"...",
+            "aliases":["..."],
+            "definition":"<1-3 sentences, plain language>",
+            "see_also":["<other term>","<other term>"],
+            "source_article":"wiki/.../...md"
+          }
+        ]
+      }
+      """;
+
+  public static final String GENERATE_OUTPUT_COMPARISON = """
+      You are generating a structured comparison of 2+ subjects (concepts,
+      tools, approaches) from a wiki knowledge base.
+
+      Subject articles: {subject_json}
+      Craft articles: {craft_json}
+      Mode: {mode}
+
+      Pick 2-4 subjects from the wiki content. Compare them across 5-12
+      dimensions. Each dimension's `values_per_subject` array MUST be the
+      same length and order as the `subjects` array. Cite source articles
+      where relevant.
+
+      Return JSON ONLY:
+      {
+        "title":"...",
+        "subjects":[
+          {"name":"...","wiki_article":"wiki/...md"}
+        ],
+        "dimensions":[
+          {
+            "dimension":"<feature being compared>",
+            "values_per_subject":["...","..."],
+            "notes":"<optional one-line>"
+          }
+        ],
+        "summary":"<2-3 sentence overall takeaway>"
+      }
+      """;
 }

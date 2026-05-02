@@ -32,6 +32,18 @@ export OPENAI_BASE_URL=https://api.openai.com/v1   # optional, defaults to OpenA
 export OPENAI_MODEL=gpt-4o-mini                    # optional, defaults to gpt-4o-mini
 ```
 
+Web search auto-selects from the first available source, in priority order:
+
+| Env var | Provider | Free tier |
+|---------|----------|-----------|
+| `TAVILY_API_KEY` | Tavily | 1000 searches/month — designed for LLM agents |
+| `BRAVE_API_KEY`  | Brave Search API | 2000 / month, 1 qps |
+| `SEARXNG_URL`    | SearXNG | unlimited if self-hosted (`docker run -d -p 8080:8080 searxng/searxng`) |
+| (none)           | DuckDuckGo HTML scrape | no key, but DDG now blocks most non-browser User-Agents — kept as a graceful-fail last resort |
+
+Recommended for development: get a free Tavily key (https://tavily.com).
+For air-gapped / fully-local use, run SearXNG in Docker.
+
 Hub path is configured via the REPL:
 
 ```
@@ -79,7 +91,7 @@ src/main/java/net/llmwiki/
     ├── Audit.java               /audit (drift + provenance + escalation)
     ├── Lessons.java             /ll
     ├── Plan.java                /plan
-    └── Output.java              /output (summary, report — others share the same shape)
+    └── Output.java              /output (summary, report, study-guide, slides, timeline, glossary, comparison)
 ```
 
 ## What's stubbed
@@ -109,7 +121,6 @@ These are documented stubs marked TODO in code:
 | Twitter/X URL fallback chain | stub — only direct fetch attempted |
 | MediaWiki dump adapter | stub |
 | MediaWiki API adapter | stub |
-| `output` types beyond `summary`/`report` | reuse the report prompt for now |
 | `plan --format rfc/adr/spec` | only `roadmap` is fully wired |
 | Lessons "current session transcript" | requires `--from <file>` because the Java process has no chat history to scan |
 | Reflection between research rounds | placeholder in the loop |
