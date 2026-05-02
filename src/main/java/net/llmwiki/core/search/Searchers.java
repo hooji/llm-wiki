@@ -5,15 +5,15 @@ import net.llmwiki.core.WebTools;
 import java.util.List;
 
 /**
- * Auto-select a WebSearcher based on environment, preferring providers most
- * likely to work without friction. As of 2026 the truly-free no-key options
- * (DuckDuckGo HTML scrape, public SearXNG instances) are widely blocked, so
- * the practical recommendations are:
+ * Auto-select a WebSearcher based on environment.
  *
  *   TAVILY_API_KEY  -> Tavily       (best for LLM agents, free 1000/mo)
  *   BRAVE_API_KEY   -> Brave        (free 2000/mo)
- *   SEARXNG_URL     -> SearXNG      (free if you self-host: docker run searxng/searxng)
- *   else            -> DuckDuckGo HTML  (no key — often blocked, kept as last resort)
+ *   SEARXNG_URL     -> SearXNG      (override default URL)
+ *   else            -> SearXNG at DEFAULT_SEARXNG_URL (the local Docker instance)
+ *
+ * DuckDuckGo HTML scraping is available via {@link #duckDuckGo()} but is
+ * NOT in the auto() chain — DDG now blocks most non-browser User-Agents.
  *
  * Override at construction:
  *   new LlmWiki(llm, agents, Searchers.tavily(myKey), fetcher);
@@ -21,14 +21,17 @@ import java.util.List;
 public final class Searchers {
   private Searchers() {}
 
+  /** Hardcoded local SearXNG endpoint. Override with SEARXNG_URL if needed. */
+  public static final String DEFAULT_SEARXNG_URL = "http://192.168.0.60:8090";
+
   public static WebTools.WebSearcher auto() {
     String tav = System.getenv("TAVILY_API_KEY");
     if (tav != null && !tav.isBlank()) return new TavilySearcher(tav);
     String brv = System.getenv("BRAVE_API_KEY");
     if (brv != null && !brv.isBlank()) return new BraveSearcher(brv);
     String sx = System.getenv("SEARXNG_URL");
-    if (sx != null && !sx.isBlank()) return new SearXngSearcher(sx);
-    return new DuckDuckGoSearcher();
+    String url = (sx != null && !sx.isBlank()) ? sx : DEFAULT_SEARXNG_URL;
+    return new SearXngSearcher(url);
   }
 
   public static WebTools.WebSearcher duckDuckGo()         { return new DuckDuckGoSearcher(); }
